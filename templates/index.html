@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Enter Your Email</h2>
+        <input type="email" id="email-input" placeholder="Enter your email">
+        <button id="send-otp-btn" onclick="sendOTP()">Send OTP</button>
+
+        <h2>Enter OTP</h2>
+        <input type="text" id="otp-input" placeholder="Enter OTP" maxlength="4">
+        <button id="submit-btn" onclick="validateOTP()">Submit</button>
+        <p id="result"></p>
+    </div>
+
+    <script>
+        function sendOTP() {
+            const email = document.getElementById('email-input').value;
+            fetch('/send-otp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email: email }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    document.getElementById('result').textContent = 'OTP sent to your email!';
+                    document.getElementById('result').style.color = 'green';
+                } else {
+                    document.getElementById('result').textContent = data.message;
+                    document.getElementById('result').style.color = 'red';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function validateOTP() {
+            const otp = document.getElementById('otp-input').value;
+            fetch('/verify-otp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ otp: otp }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    document.getElementById('result').textContent = 'OTP Verified Successfully!';
+                    document.getElementById('result').style.color = 'green';
+                } else {
+                    document.getElementById('result').textContent = data.message;
+                    document.getElementById('result').style.color = 'red';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
